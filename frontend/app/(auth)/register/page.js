@@ -14,8 +14,10 @@ import {
 } from '@mui/material';
 import { registerValidationSchema } from '@/validation-schema/register.validation.schema';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const Register = () => {
+  const router = useRouter();
   return (
     <Box>
       <Formik
@@ -31,7 +33,15 @@ const Register = () => {
         }}
         validationSchema={registerValidationSchema}
         onSubmit={async (values) => {
-          console.log(values);
+          try {
+            const response = await axios.post(
+              'http://localhost:8888/user/register',
+              values
+            );
+            router.push('/login');
+          } catch (error) {
+            console.log('error occurred.');
+          }
         }}
       >
         {(formik) => {
