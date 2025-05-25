@@ -15,6 +15,7 @@ import {
 import { registerValidationSchema } from '@/validation-schema/register.validation.schema';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const Register = () => {
   const router = useRouter();
@@ -147,6 +148,9 @@ const Register = () => {
               >
                 Register
               </Button>
+              <Link href={'/login'} className="text-blue-700 underline">
+                Already Registered? Login
+              </Link>
             </form>
           );
         }}

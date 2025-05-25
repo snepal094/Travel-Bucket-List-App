@@ -2,19 +2,23 @@
 
 import EditorList from '@/components/EditorList';
 import ExplorerList from '@/components/ExplorerList';
-import { Expletus_Sans } from 'next/font/google';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Home = () => {
-  const role = window.localStorage.getItem('currentRole');
+  // const role = window.localStorage.getItem('currentRole');
+  const [currentRole, setCurrentRole] = useState(null);
+  const [firstName, setFirstName] = useState('');
+
+  useEffect(() => {
+    setCurrentRole(window.localStorage.getItem('currentRole'));
+    setFirstName(window.localStorage.getItem('firstName'));
+  }, []);
 
   return (
     <div>
-      <p className="text-5xl">
-        Welcome, {window.localStorage.getItem('firstName')}!
-      </p>
+      <p className="text-5xl">Welcome, {firstName}!</p>
 
-      {role === 'explorer' ? <ExplorerList /> : <EditorList />}
+      {currentRole === 'explorer' ? <ExplorerList /> : <EditorList />}
     </div>
   );
 };
