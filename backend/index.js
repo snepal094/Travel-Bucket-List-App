@@ -4,13 +4,15 @@ import userRoutes from './user/user.controller.js';
 import destinationRoutes from './destination/destination.controller.js';
 import bucketRoutes from './bucket/bucket.controller.js';
 import stampRoutes from './stamp/stamp.controller.js';
+import cors from 'cors';
 
 const app = express();
 
 //make app understand json
 app.use(express.json());
 
-//TODO: enable cors
+//cross origin resource sharing
+app.use(cors());
 
 //connect database
 await connectDB(); //connectDB() is an asynchronous function.
