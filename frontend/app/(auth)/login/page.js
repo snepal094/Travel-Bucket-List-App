@@ -10,8 +10,12 @@ import {
   TextField,
 } from '@mui/material';
 import { loginValidationSchema } from '@/validation-schema/login.validation.schema';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const Login = () => {
+  const router = useRouter();
   return (
     <Box>
       <Formik
@@ -20,8 +24,34 @@ const Login = () => {
           password: '',
         }}
         validationSchema={loginValidationSchema}
-        onSubmit={(values) => {
+        onSubmit={async (values) => {
           console.log(values);
+          try {
+            const response = await axios.post(
+              'http://localhost:8888/user/login',
+              //req.body:
+              {
+                identifier: values.identifier,
+                password: values.password,
+              }
+            );
+
+            window.localStorage.setItem('token', response?.data?.accessToken);
+            window.localStorage.setItem(
+              'firstName',
+              response?.data?.userDetails?.firstName
+            );
+            window.localStorage.setItem(
+              'currentRole',
+              response?.data?.userDetails?.currentRole
+            );
+
+            router.push('/');
+
+            console.log(response);
+          } catch (error) {
+            console.log('error occurred');
+          }
         }}
       >
         {(formik) => {
@@ -66,6 +96,12 @@ const Login = () => {
                 Log In
               </Button>
               {/*className doesn't work in Button*/}
+
+              <div>
+                <Link href={'/register'} className="text-blue-700 underline">
+                  New here? Register
+                </Link>
+              </div>
             </form>
           );
         }}
