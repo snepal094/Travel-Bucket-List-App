@@ -1,0 +1,116 @@
+'use client';
+
+import { addDestinationValidationSchema } from '@/validation-schema/add.destination.validation.schema';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  TextField,
+} from '@mui/material';
+import axios from 'axios';
+import { Formik } from 'formik';
+import { useRouter } from 'next/navigation';
+import React from 'react';
+
+const AddDestination = () => {
+  const router = useRouter();
+  return (
+    <Box>
+      <Formik
+        initialValues={{
+          name: '',
+          city: '',
+          country: '',
+          images: [],
+          description: '',
+        }}
+        validationSchema={addDestinationValidationSchema}
+        onSubmit={async (values) => {
+          console.log(values);
+          try {
+            const token = localStorage.getItem('token'); // Retrieve token
+            if (!token) {
+              console.error('Token not found');
+              return;
+            }
+
+            const response = await axios.post(
+              'http://localhost:8888/destination/add',
+              values,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            router.push('/');
+          } catch (error) {
+            console.log('error occurred');
+          }
+        }}
+      >
+        {(formik) => {
+          return (
+            <form
+              onSubmit={formik.handleSubmit}
+              className="h-screen w-full flex flex-col items-center shadow-2xl px-8 py-6 gap-3 max-w-[400px] max-h-[400px]"
+            >
+              <FormControl>
+                <TextField
+                  label="Name of the destination"
+                  {...formik.getFieldProps('name')}
+                />
+                {formik.touched.name && formik.errors.name ? (
+                  <FormHelperText error>{formik.errors.name}</FormHelperText>
+                ) : null}
+              </FormControl>
+
+              <FormControl>
+                <TextField label="City" {...formik.getFieldProps('city')} />
+                {formik.touched.city && formik.errors.city ? (
+                  <FormHelperText error>{formik.errors.city}</FormHelperText>
+                ) : null}
+              </FormControl>
+
+              <FormControl>
+                <TextField
+                  label="Country"
+                  {...formik.getFieldProps('country')}
+                />
+                {formik.touched.country && formik.errors.country ? (
+                  <FormHelperText error>{formik.errors.country}</FormHelperText>
+                ) : null}
+              </FormControl>
+
+              <FormControl>
+                <TextField label="Images" {...formik.getFieldProps('images')} />
+                {formik.touched.images && formik.errors.images ? (
+                  <FormHelperText error>{formik.errors.images}</FormHelperText>
+                ) : null}
+              </FormControl>
+
+              <FormControl>
+                <TextField
+                  label="Description"
+                  {...formik.getFieldProps('description')}
+                />
+                {formik.touched.description && formik.errors.description ? (
+                  <FormHelperText error>
+                    {formik.errors.description}
+                  </FormHelperText>
+                ) : null}
+              </FormControl>
+
+              <Button type="submit" variant="contained" color="secondary">
+                Add Destination
+              </Button>
+            </form>
+          );
+        }}
+      </Formik>
+    </Box>
+  );
+};
+
+export default AddDestination;

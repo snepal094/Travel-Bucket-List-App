@@ -160,3 +160,5 @@ const Register = () => {
 };
 
 export default Register;
+
+//TODO password visibility, drop down menu
