@@ -10,17 +10,34 @@ import {
   Button,
   FormControl,
   FormHelperText,
+  LinearProgress,
   TextField,
 } from '@mui/material';
 import { registerValidationSchema } from '@/validation-schema/register.validation.schema';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useMutation } from '@tanstack/react-query';
+import $axios from '@/lib/axios/axios.instance';
 
 const Register = () => {
   const router = useRouter();
+
+  const { isPending, error, mutate } = useMutation({
+    mutationKey: ['register-user'], //unique name
+    mutationFn: async (values) => {
+      return await $axios.post('/user/register', values);
+    },
+    onSuccess: () => {
+      router.push('/login');
+    },
+    onError: (error) => {
+      console.log(error.response.data.message);
+    },
+  });
   return (
     <Box>
+      {isPending && <LinearProgress color="secondary" />}
       <Formik
         initialValues={{
           email: '',
@@ -33,17 +50,22 @@ const Register = () => {
           currentRole: '',
         }}
         validationSchema={registerValidationSchema}
-        onSubmit={async (values) => {
-          try {
-            const response = await axios.post(
-              'http://localhost:8888/user/register',
-              values
-            );
-            router.push('/login');
-          } catch (error) {
-            console.log('error occurred.');
-          }
+        onSubmit={(values) => {
+          mutate(values);
         }}
+
+        //? if not useMutation (beginner):
+        // onSubmit={async (values) => {
+        //   try {
+        //     const response = await axios.post(
+        //       'http://localhost:8888/user/register',
+        //       values
+        //     );
+        //     router.push('/login');
+        //   } catch (error) {
+        //     console.log('error occurred.');
+        //   }
+        // }}
       >
         {(formik) => {
           return (
@@ -145,6 +167,7 @@ const Register = () => {
                 type="submit"
                 color="secondary"
                 variant="contained"
+                disabled={isPending} //can't click on the button when loading
               >
                 Register
               </Button>

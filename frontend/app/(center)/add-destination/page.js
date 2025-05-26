@@ -1,5 +1,6 @@
 'use client';
 
+import $axios from '@/lib/axios/axios.instance';
 import { addDestinationValidationSchema } from '@/validation-schema/add.destination.validation.schema';
 import {
   Box,
@@ -35,15 +36,11 @@ const AddDestination = () => {
               return;
             }
 
-            const response = await axios.post(
-              'http://localhost:8888/destination/add',
-              values,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
+            const response = await $axios.post('/destination/add', values, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
             router.push('/');
           } catch (error) {
             console.log('error occurred');
