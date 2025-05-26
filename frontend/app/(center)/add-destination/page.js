@@ -9,15 +9,34 @@ import {
   FormHelperText,
   TextField,
 } from '@mui/material';
-import axios from 'axios';
+import { useMutation } from '@tanstack/react-query';
 import { Formik } from 'formik';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const AddDestination = () => {
   const router = useRouter();
+
+  const token = localStorage.getItem('token'); // Retrieve token
+
+  const { isPending, error, data, mutate } = useMutation({
+    mutationKey: ['add-destination'],
+    mutationFn: async (values) => {
+      return await $axios.post('/destination/add', values, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    },
+    onSuccess: () => {
+      router.push('/');
+    },
+    onError: (error) => {
+      console.log(error.response.data.message);
+    },
+  });
   return (
-    <Box>
+    <Box className="flex flex-col justify-center items-center h-screen">
       <Formik
         initialValues={{
           name: '',
@@ -27,32 +46,36 @@ const AddDestination = () => {
           description: '',
         }}
         validationSchema={addDestinationValidationSchema}
-        onSubmit={async (values) => {
-          console.log(values);
-          try {
-            const token = localStorage.getItem('token'); // Retrieve token
-            if (!token) {
-              console.error('Token not found');
-              return;
-            }
-
-            const response = await $axios.post('/destination/add', values, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            router.push('/');
-          } catch (error) {
-            console.log('error occurred');
-          }
+        onSubmit={(values) => {
+          mutate(values);
         }}
+        // onSubmit={async (values) => {
+        //   console.log(values);
+        //   try {
+        //     const token = localStorage.getItem('token'); // Retrieve token
+        //     if (!token) {
+        //       console.error('Token not found');
+        //       return;
+        //     }
+
+        //     const response = await $axios.post('/destination/add', values, {
+        //       headers: {
+        //         Authorization: `Bearer ${token}`,
+        //       },
+        //     });
+        //     router.push('/');
+        //   } catch (error) {
+        //     console.log('error occurred');
+        //   }
+        // }}
       >
         {(formik) => {
           return (
             <form
               onSubmit={formik.handleSubmit}
-              className="h-screen w-full flex flex-col items-center shadow-2xl px-8 py-6 gap-3 max-w-[400px] max-h-[400px]"
+              className="w-full flex flex-col items-center shadow-2xl px-8 py-6 gap-3 max-w-[400px] min-h-[400px]"
             >
+              <p className="text-3xl font-bold">Add Destination</p>
               <FormControl>
                 <TextField
                   label="Name of the destination"
