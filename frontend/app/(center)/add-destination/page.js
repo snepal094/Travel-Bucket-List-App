@@ -12,19 +12,24 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { Formik } from 'formik';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const AddDestination = () => {
   const router = useRouter();
 
-  const token = localStorage.getItem('token'); // Retrieve token
+  const [accessToken, setAccessToken] = useState(null);
+  useEffect(() => {
+    const token = window.localStorage.getItem('token');
+    setAccessToken(token);
+  }, []);
 
   const { isPending, error, data, mutate } = useMutation({
     mutationKey: ['add-destination'],
     mutationFn: async (values) => {
+      //axios.post(URL, req.body, headers)
       return await $axios.post('/destination/add', values, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
     },
@@ -36,7 +41,7 @@ const AddDestination = () => {
     },
   });
   return (
-    <Box className="flex flex-col justify-center items-center h-screen">
+    <Box>
       <Formik
         initialValues={{
           name: '',

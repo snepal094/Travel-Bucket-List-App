@@ -2,9 +2,13 @@
 
 import EditorList from '@/components/EditorList';
 import ExplorerList from '@/components/ExplorerList';
+import { Button } from '@mui/material';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 const Home = () => {
+  const router = useRouter();
+
   // const role = window.localStorage.getItem('currentRole');
   const [currentRole, setCurrentRole] = useState(null);
   const [firstName, setFirstName] = useState('');
@@ -18,7 +22,20 @@ const Home = () => {
     <div>
       <p className="text-5xl">Welcome, {firstName}!</p>
 
-      {currentRole === 'explorer' ? <ExplorerList /> : <EditorList />}
+      <Button
+        variant="contained"
+        color="secondary"
+        size="large"
+        onClick={() => {
+          router.push('/add-destination');
+        }}
+      >
+        Add Destination
+      </Button>
+
+      <div className="h-full w-full flex justify-center items-center m-8">
+        {currentRole === 'explorer' ? <ExplorerList /> : <EditorList />}
+      </div>
     </div>
   );
 };
