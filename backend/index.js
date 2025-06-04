@@ -12,13 +12,17 @@ const app = express();
 app.use(express.json());
 
 //cross origin resource sharing
-app.use(cors());
+app.use(
+  cors({
+    origin: '*', //allow requests from all domains
+  })
+);
 
 //connect database
 await connectDB(); //connectDB() is an asynchronous function.
 
 //register routes
-app.use(userRoutes);
+app.use('/user', userRoutes);
 app.use(destinationRoutes);
 app.use(bucketRoutes);
 app.use(stampRoutes);

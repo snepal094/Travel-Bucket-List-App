@@ -16,7 +16,7 @@ const router = express.Router();
 
 //* register user
 router.post(
-  '/user/register',
+  '/register',
   validateRequestBody(userValidationSchema),
 
   async (req, res) => {
@@ -61,7 +61,7 @@ and reusability */
 //* login user
 //post because we are extracting email/username and from req.body
 router.post(
-  '/user/login',
+  '/login',
   validateRequestBody(loginUserValidationSchema),
 
   async (req, res) => {
@@ -73,6 +73,8 @@ router.post(
         { username: loginCredentials.identifier },
       ],
     });
+
+    // console.log(user);
     // asynchronous operation because it queries the database, which takes time
     // a function being async means it returns a Promise
 
@@ -80,7 +82,7 @@ router.post(
       return res.status(404).send({ message: 'User not found.' });
     }
 
-    //if user exists, compare password using bcrypt
+    // if user exists, compare password using bcrypt
     const plainPassword = loginCredentials.password;
     const hashedPassword = user.password;
     const isPasswordCorrect = await bcrypt.compare(
@@ -118,7 +120,7 @@ OR: run generate.random.string.js
 
 //* switch roles
 router.patch(
-  '/user/switch/role',
+  '/switch/role',
   isUser,
   validateRequestBody(roleSwitchSchema),
   async (req, res) => {

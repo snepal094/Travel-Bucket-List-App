@@ -13,24 +13,13 @@ const router = express.Router();
 
 //* add destination to bucket
 router.post(
-  '/bucket/add/destination',
+  '/bucket/add/destination/:id',
   isUser,
   isExplorer,
-  validateRequestBody(bucketValidationSchema),
-
-  (req, res, next) => {
-    const { destinationId } = req.body;
-
-    const isValidId = checkMongoIdValidity(destinationId);
-    if (!isValidId) {
-      return res.status(400).send({ message: 'Invalid Mongo Id.' });
-    }
-
-    next();
-  },
+  validateMongoIdFromParams,
 
   async (req, res) => {
-    const { destinationId, isVisited, visitedDate } = req.body;
+    const destinationId = req.params.id;
 
     const destination = await Destination.findOne({ _id: destinationId });
 
@@ -43,31 +32,29 @@ router.post(
       explorerId: req.loggedInUserId,
     });
 
-    const stamp = await Stamp.findOne({
-      destinationId,
-      explorerId: req.loggedInUserId,
-    });
-
     if (bucket) {
       return res
         .status(404)
         .send({ message: 'Destination has already been added to bucket.' });
     }
 
+    const stamp = await Stamp.findOne({
+      destinationId,
+      explorerId: req.loggedInUserId,
+    });
+
     if (stamp) {
       return res
         .status(404)
-        .send({ message: 'You have already stamp this destination.' });
+        .send({ message: 'You have already stamped this destination.' });
     }
 
-    //add item to cart
+    //add item to bucket
     await Bucket.create({
       explorerId: req.loggedInUserId,
       explorerUsername: req.username,
       destinationId,
       destinationName: destination.name,
-      isVisited,
-      visitedDate,
     });
 
     //send response
