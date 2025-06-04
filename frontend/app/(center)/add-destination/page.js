@@ -17,21 +17,26 @@ import React, { useEffect, useState } from 'react';
 const AddDestination = () => {
   const router = useRouter();
 
-  const [accessToken, setAccessToken] = useState(null);
-  useEffect(() => {
-    const token = window.localStorage.getItem('token');
-    setAccessToken(token);
-  }, []);
+  //? not needed because of interceptor in axios.instance.js
+  // const [accessToken, setAccessToken] = useState(null);
+  // useEffect(() => {
+  //   const token = window.localStorage.getItem('token');
+  //   setAccessToken(token);
+  // }, []);
 
   const { isPending, error, data, mutate } = useMutation({
     mutationKey: ['add-destination'],
     mutationFn: async (values) => {
-      //axios.post(URL, req.body, headers)
-      return await $axios.post('/destination/add', values, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      axios.post(URL, req.body, headers);
+      return await $axios.post(
+        '/destination/add',
+        values
+        //    {
+        //   headers: {
+        //     Authorization: `Bearer ${accessToken}`,
+        //   },
+        // }
+      );
     },
     onSuccess: () => {
       router.push('/');

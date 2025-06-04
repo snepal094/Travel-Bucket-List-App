@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import ReactQueryClientProvider from '@/providers/ReactQueryClientProvider';
+import Header from '@/components/Header';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -14,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: 'Travel App',
-  description: 'To manage and stamp you dream destinations',
+  description: 'To manage and stamp your dream destinations',
 };
 
 export default function RootLayout({ children }) {
@@ -24,6 +25,7 @@ export default function RootLayout({ children }) {
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
+          {/* <Header /> */}
           {children}
         </body>
       </ReactQueryClientProvider>
