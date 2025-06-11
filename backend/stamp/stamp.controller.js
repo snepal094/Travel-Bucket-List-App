@@ -125,6 +125,14 @@ router.post(
   }
 );
 
+//* list stamps
+router.get('/stamp/list', isUser, isExplorer, async (req, res) => {
+  const explorerId = req.loggedInUserId;
+  const stamps = await Stamp.find({ explorerId });
+  // console.log(stamps);
+  return res.status(200).send({ message: 'success', stampList: stamps });
+});
+
 //* flush stamps
 router.delete('/stamp/flush', isUser, isExplorer, async (req, res) => {
   const explorerId = req.loggedInUserId;
